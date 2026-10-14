@@ -3,6 +3,12 @@
 Unofficial CLI to download [Boditrax](https://www.boditrax.com/) 2.0 body-composition scans and
 export them as JSON or CSV, or sync them into PostgreSQL or SQLite.
 
+> **This is a reverse-engineering project.** boditrax-sync was built by reverse-engineering the
+> private mobile API used by the official Boditrax 2.0 app (see
+> [How it works](#how-it-works-reverse-engineering)). It is not affiliated with, endorsed by, or
+> supported by Boditrax, and the API may change or stop working at any time. Use it on your own
+> account, at your own risk.
+
 Boditrax offers no public API and no practical export of your scan history. This tool signs in to
 your own Boditrax account through the same mobile API the official app uses, pulls every reading,
 and hands you the data: weight, fat/muscle mass per body segment, phase angles, visceral fat,
@@ -183,22 +189,26 @@ Timestamps are gym-local. The default timezone is `Europe/London`; override with
 
 </details>
 
-## How it works
+## How it works (reverse engineering)
 
 The Boditrax 2.0 app speaks gRPC-web to `mobile.api.boditrax.cloud`. The protocol here was
-reverse-engineered from app version 3.1.1 and verified against the app's own CSV export
-(340/340 values identical, 2026-10-14). Authentication is the app's OAuth password grant
-(client id `boditrax.mobile.app`; the client secret embedded in this tool is the one shipped in
-the public mobile app, not a user secret). The tool fetches all readings via
-`SyncLoginService/Get` and maps each `BodyMetricTypeId` to the metric names above.
+reverse-engineered from app version 3.1.1 for interoperability (exporting your own data from your
+own account) and verified against the app's own CSV export (340/340 values identical,
+2026-10-14). No Boditrax software or binaries are included in or redistributed by this
+repository; everything here is original code written against the observed protocol.
+Authentication is the app's OAuth password grant (client id `boditrax.mobile.app`; the client
+secret embedded in this tool is the one shipped in the public mobile app, not a user secret).
+The tool fetches all readings via `SyncLoginService/Get` and maps each `BodyMetricTypeId` to the
+metric names above.
 
 ## Disclaimer
 
-This project is unofficial and not affiliated with, endorsed by, or supported by Boditrax. It
-works with your own account and your own data. The API is private and undocumented; Boditrax may
-change or block it at any time and this tool may stop working. Use at your own risk, and review
-Boditrax's terms of service before using it. Never share your credentials or a database
-containing your health data.
+This project is an unaffiliated, unofficial reverse-engineering effort and is not endorsed by or
+supported by Boditrax. The API it targets is private and undocumented; Boditrax may change,
+rotate, or block it at any time and this tool may stop working. It exists purely for
+interoperability: retrieving and storing your own scan data from your own account. Use it at
+your own risk, and review Boditrax's terms of service before using it. Never share your
+credentials or a database containing your health data.
 
 ## Development
 
